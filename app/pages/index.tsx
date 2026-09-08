@@ -1,77 +1,57 @@
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
+import Head from 'next/head';
 import Image from 'next/image';
 
-const Home: NextPage = () => {
-  const handleNextStep = async () => {
-    window.location.href = '/api/redirect';
-  };
+const NG_PAYMENT_URL = process.env.NEXT_PUBLIC_NG_PAYMENT_URL || 'https://www.dataverseconsultingsolutions.com/35a360aa';
 
-  return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      background: 'linear-gradient(135deg, #A071FE 0%, #8B5CF6 100%)',
-      padding: '20px',
-    }}>
-      <div style={{
-        textAlign: 'center',
-        backgroundColor: 'white',
-        padding: '56px 40px',
-        borderRadius: '16px',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
-        maxWidth: '560px',
-        width: '100%',
-      }}>
-        <div style={{ position: 'relative', width: '100%', height: '80px', margin: '0 auto 24px' }}>
-          <Image 
-            src="/dataverse-logo.png" 
-            alt="Dataverse Solutions" 
-            fill
-            style={{ objectFit: 'contain' }}
-            priority
-          />
-        </div>
-        <h1 style={{
-          fontSize: '28px',
-          color: '#111',
-          marginBottom: '12px',
-          lineHeight: 1.3,
-        }}>
-          Congratulations on taking your first step toward a career in tech.
-        </h1>
-        <p style={{
-          fontSize: '16px',
-          color: '#555',
-          lineHeight: 1.6,
-          marginBottom: '36px',
-        }}>
-          Step into your next opportunity.
-        </p>
-        <button
-          onClick={handleNextStep}
-          style={{
-            display: 'inline-block',
-            padding: '14px 36px',
-            backgroundColor: '#A071FE',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: 700,
-            fontSize: '16px',
-            transition: 'background-color 0.3s ease',
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#8B5CF6')}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#A071FE')}
-        >
-          Click here to get started
-        </button>
-      </div>
-    </div>
-  );
+type Week = { title: string; goals: string[]; deliverables: string[]; outcome: string };
+
+const weeks: Week[] = [
+  { title: 'Establish yourself as a high-impact DPO', goals: ['Understand what leaders expect from an effective DPO.', 'Evaluate an organization\'s current privacy maturity.', 'Clarify the roles of DPO, Legal, Compliance, IT and the business.', 'Draft a roadmap for closing the most important gaps.'], deliverables: ['DPO competency and career roadmap', 'Privacy maturity assessment framework', 'Roles-and-responsibilities matrix', 'Guided organizational case study'], outcome: 'Assess an organization\'s privacy position, identify priority gaps and explain to leadership what must happen next.' },
+  { title: 'Turn privacy laws into organizational action', goals: ['Determine which privacy obligations apply.', 'Translate the NDPA, GDPR and other laws into business requirements.', 'Select and document the lawful basis for processing.', 'Identify actions that improve regulatory readiness.'], deliverables: ['Regulatory requirements mapping framework', 'Legal-basis assessment tool', 'Compliance obligations checklist', 'Compliance-readiness review method'], outcome: 'Convert complex legal requirements into a prioritized action plan business teams can understand and implement.' },
+  { title: 'Create visibility into how personal data is used', goals: ['Discover how data is collected, used, shared, stored and deleted.', 'Lead stakeholder interviews and uncover undocumented processing.', 'Build a defensible Record of Processing Activities.', 'Spot unnecessary collection, excessive retention and risky flows.'], deliverables: ['Ready-to-use RoPA template', 'Stakeholder data-mapping questionnaire', 'Data inventory framework', 'Retention and disposal assessment checklist'], outcome: 'Lead a data-mapping exercise and produce a RoPA that gives real visibility into data, risks and obligations.' },
+  { title: 'Identify privacy risks before they become problems', goals: ['Decide when a project or technology needs a DPIA.', 'Evaluate risk by likelihood, impact and potential harm.', 'Recommend controls that reduce risk to an acceptable level.', 'Build privacy into products and processes before launch.'], deliverables: ['Practical DPIA template', 'Privacy risk-scoring methodology', 'Privacy-by-design review checklist', 'Risk-and-control library'], outcome: 'Review a proposed initiative, identify material risks and present recommendations that help the business innovate responsibly.' },
+  { title: 'Respond effectively when rights or data are at risk', goals: ['Manage data-subject requests within regulatory deadlines.', 'Coordinate fulfilment across Legal, IT, HR and operations.', 'Triage and investigate suspected incidents.', 'Decide on escalation, containment and notification.'], deliverables: ['End-to-end data-subject rights workflow', 'Request prioritization and tracking framework', 'Incident assessment and escalation matrix', 'Regulatory notification decision framework'], outcome: 'Take control of high-pressure matters, coordinate the right people and guide a timely, compliant response.' },
+  { title: 'Protect the organization from third-party privacy risk', goals: ['Identify vendors that create the greatest exposure.', 'Assess vendor controls before data is shared.', 'Assign risk levels and due-diligence requirements.', 'Identify contractual protections and remediation.'], deliverables: ['Vendor privacy-risk assessment questionnaire', 'Third-party risk-tiering framework', 'Vendor due-diligence checklist', 'Data Processing Agreement review guide'], outcome: 'Assess a vendor, explain the risk to decision-makers and recommend the controls and contract terms needed before proceeding.' },
+  { title: 'Build a privacy program that works in practice', goals: ['Design an operating model aligned to structure and risk.', 'Establish accountability across leadership, DPO and the business.', 'Prioritize policies, processes and controls by need.', 'Measure performance and communicate risk to leadership.'], deliverables: ['Privacy program operating-model template', 'Governance and accountability framework', 'Sample metrics, KPIs and KRIs', 'Leadership reporting dashboard'], outcome: 'Leave with a blueprint for building, operating and improving an organization-wide privacy program.' },
+  { title: 'Position yourself, prove your value and negotiate confidently', goals: ['Communicate your knowledge and experience with confidence.', 'Answer technical, behavioural and scenario-based interview questions.', 'Show how you\'d advise leadership and solve real problems.', 'Present your bootcamp projects as evidence of capability.'], deliverables: ['Live DPO interview simulations', 'Technical and scenario-based questions', 'CV and LinkedIn positioning guidance', 'Project portfolio and value-proposition framework'], outcome: 'Present yourself as a capable, business-focused DPO, compete for senior opportunities and negotiate from a stronger position.' },
+];
+
+const outcomes = [
+  ['Operate like a modern DPO', 'Advise leadership, influence business decisions and translate regulatory requirements into practical organizational action.'],
+  ['Build a real privacy program', 'Stand up governance structures, policies, controls and an implementation roadmap.'],
+  ['Find and reduce real risk', 'Run RoPAs, DPIAs, compliance assessments and third-party reviews.'],
+  ['Lead privacy operations', 'Manage data-subject requests, incidents, regulatory obligations and cross-functional responses.'],
+  ['Raise your professional value', 'Develop practical expertise and position yourself for stronger roles and consulting work.'],
+  ['Prove it with deliverables', 'Leave with professional templates and completed projects that demonstrate exactly what you can do.'],
+];
+
+const Home: NextPage = () => (
+  <>
+    <Head><title>DPO Bootcamp | Dataverse Solutions</title><meta name="description" content="Become the DPO organizations need with Dataverse Solutions." /></Head>
+    <header className="topbar"><Image src="/dataverse-logo.png" alt="Dataverse Solutions" width={170} height={42} priority /></header>
+    <main>
+      <section className="hero"><div className="wrap hero-inner"><span className="badge">8-Week Intensive · Live &amp; Mentor-Led</span><h1>Become the DPO organizations need</h1><p className="lead">A practical, mentor-led bootcamp that teaches you to think, operate and communicate like a highly effective Data Protection Officer.</p><a className="button" href={NG_PAYMENT_URL}>Secure your spot <span aria-hidden="true">→</span></a><p className="note">Program begins Saturday, September 19, 2026 · Limited spaces</p><div className="facts"><div><small>Begins</small><strong>Sep 19, 2026</strong><em>Saturday</em></div><div><small>Duration</small><strong>8 Weeks</strong><em>Live &amp; virtual</em></div><div><small>Format</small><strong>Mentor-Led</strong><em>Practical sessions</em></div><div><small>Investment</small><strong>₦425,000</strong><em>Early-bird · was ₦500,000</em></div></div></div></section>
+      <section className="section"><div className="wrap"><p className="kicker">What you&apos;ll walk away with</p><h2>This is not another privacy course</h2><p className="section-lead">By the end of eight intensive weeks, you&apos;ll be able to operate with the confidence of a working DPO, not just recite the theory.</p><div className="outcome-grid">{outcomes.map(([title, text], index) => <article className="outcome" key={title}><span>{index + 1}</span><h3>{title}</h3><p>{text}</p></article>)}</div></div></section>
+      <section className="section dark"><div className="wrap"><p className="kicker">Your eight-week transformation</p><h2>Built around outcomes, not topic lists</h2><p className="section-lead">Each week works through realistic organizational scenarios, uses professional templates and produces deliverables that show what you can do.</p><div className="timeline">{weeks.map((week, index) => <article className="week" key={week.title}><span className="week-number">{index + 1}</span><div><small>Week {index + 1}</small><h3>{week.title}</h3><div className="week-grid"><div><h4>Your goals</h4><ul>{week.goals.map((goal) => <li key={goal}>{goal}</li>)}</ul></div><div><h4>What you&apos;ll get</h4><ul>{week.deliverables.map((item) => <li key={item}>{item}</li>)}</ul></div></div><p className="outcome-line"><b>The outcome</b>{week.outcome}</p></div></article>)}</div></div></section>
+      <section className="section"><div className="wrap"><p className="kicker">Is this you?</p><h2>This bootcamp is built for you if...</h2><ul className="checklist">{['You\'re new to data protection and need a structured entry point.', 'You\'re in a DPO role but want greater practical confidence.', 'You work in Legal, Risk, Compliance, Audit, Cybersecurity or Governance.', 'You want to transition into a privacy career.', 'You understand the theory but struggle to apply it.', 'You\'re preparing for DPO or senior privacy interviews.', 'You want practical templates, mentorship and real-world guidance.'].map((item) => <li key={item}>{item}</li>)}</ul></div></section>
+      <section className="section pale"><div className="wrap two-col"><div className="instructor"><p className="kicker">Why learn from us</p><h2>Real programs. Real scenarios. Not theory alone.</h2><p>We&apos;ve helped global organizations build and strengthen their privacy and compliance programs, and we bring those frameworks, lessons and scenarios into the room.</p></div><div><h3>Led by Temi Olaniyan</h3><p className="role">Lead Instructor · 15+ years in privacy &amp; compliance</p><ul className="credentials"><li>Helped build Meta&apos;s privacy program from the ground up.</li><li>Established privacy-by-design capabilities for T-Mobile.</li><li>Supported regulatory readiness for Roche Pharmaceuticals.</li><li>Built compliance and privacy programs across global organizations.</li></ul></div></div></section>
+      <section className="section pricing"><div className="price-box"><p className="kicker">Your investment</p><h2>Enroll in the DPO Bootcamp</h2><p>Eight weeks of practical training, real templates, mentorship, interview simulations and career-positioning support.</p><div className="prices"><del>₦500,000</del><strong>₦425,000</strong></div><small>Early-bird tuition · 15% off until September 12, 2026</small><a className="button" href={NG_PAYMENT_URL}>Enroll now &amp; pay <span aria-hidden="true">→</span></a><p className="fineprint">Program begins Saturday, September 19, 2026. Limited spaces are kept small to preserve the quality of mentorship.</p></div></section>
+    </main>
+    <footer>DataVerse Consulting Solutions · DPO Bootcamp | <a href="mailto:hello@dataverseconsultingsolutions.com">Contact us</a></footer>
+    <style jsx>{styles}</style>
+  </>
+);
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const country = String(req.headers['x-vercel-ip-country'] || req.headers['x-vercel-ip-country-code'] || '').toUpperCase();
+  const internationalUrl = process.env.NEXT_PUBLIC_INTERNATIONAL_PAYMENT_URL || 'https://www.dataverseconsultingsolutions.com/dpobootcamp-68c8959f-2c116596-3129f127';
+  if (country && country !== 'NG') return { redirect: { destination: internationalUrl, permanent: false } };
+  return { props: {} };
 };
+
+const styles = `
+  :global(*){box-sizing:border-box}:global(body){margin:0;background:#f7f5fc;color:#221542;font-family:Inter,Arial,sans-serif;line-height:1.6}:global(a){color:inherit}.wrap{max-width:1080px;margin:auto;padding:0 24px}.topbar{height:76px;background:#0d0620;display:flex;align-items:center;justify-content:center}.hero,.dark,.pricing{background:#160b2e;color:#f3eeff}.hero{background:radial-gradient(900px 420px at 78% -8%,#6b42a840,transparent 60%),#160b2e}.hero-inner{text-align:center;padding-top:84px;padding-bottom:72px}.badge,.kicker{color:#a78bfa;font-size:13px;font-weight:800;letter-spacing:.04em}.badge{display:inline-block;border:1px solid #ffffff26;border-radius:999px;padding:7px 16px;margin-bottom:24px}.hero h1{max-width:700px;margin:0 auto 20px;color:#fff;font:600 clamp(40px,6vw,68px)/1.08 Georgia,serif}.lead,.section-lead{max-width:650px;margin:0 auto 30px;color:#b8a9da;font-size:19px}.button{display:inline-flex;gap:12px;align-items:center;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:white;text-decoration:none;font-weight:800;padding:15px 26px;border-radius:8px;box-shadow:0 12px 30px #7c3aed55}.note{color:#b8a9da;font-size:14px}.facts{display:grid;grid-template-columns:repeat(4,1fr);margin:50px auto 0;max-width:900px;border:1px solid #ffffff24;border-radius:10px;text-align:left}.facts>div{padding:20px;border-right:1px solid #ffffff24}.facts>div:last-child{border:0}.facts small,.facts em{display:block;color:#b8a9da;font-style:normal;font-size:12px}.facts strong{display:block;color:#fff;font:600 21px Georgia,serif}.section{padding:76px 0}.section h2{max-width:680px;margin:0 0 14px;font:500 clamp(30px,4vw,44px)/1.1 Georgia,serif}.section .kicker{margin:0 0 16px}.section-lead{margin:0 0 42px;color:#6b5f82}.outcome-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.outcome{background:#fff;border:1px solid #e7e1f5;border-radius:10px;padding:24px}.outcome span{display:grid;place-items:center;width:32px;height:32px;color:#7c3aed;border:1px solid #e7e1f5;border-radius:7px}.outcome h3{font:600 20px Georgia,serif;margin:14px 0 6px}.outcome p{color:#6b5f82;margin:0}.dark{background:#0d0620}.dark h2{color:#fff}.dark .section-lead{color:#b8a9da}.timeline{border-left:2px solid #7c3aed;margin-top:38px}.week{position:relative;padding:0 0 32px 48px;display:grid;grid-template-columns:1fr}.week-number{position:absolute;left:-21px;top:0;width:40px;height:40px;border:2px solid #7c3aed;border-radius:50%;background:#0d0620;display:grid;place-items:center;color:#a78bfa;font-weight:700}.week small,.week h4{color:#a78bfa}.week h3{color:#fff;font:600 27px Georgia,serif;margin:4px 0 18px}.week-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}.week h4{font-size:13px;margin:0 0 8px}.week ul,.credentials{padding:0;margin:0;list-style:none}.week li{color:#b8a9da;font-size:14px;margin:7px 0;padding-left:18px}.week li:before{content:'•';color:#7c3aed;margin-left:-16px;margin-right:10px}.outcome-line{border-top:1px solid #ffffff20;padding-top:16px;color:#f3eeff}.outcome-line b{display:block;color:#fff;margin-bottom:4px}.checklist{display:grid;grid-template-columns:1fr 1fr;gap:15px 30px;list-style:none;padding:0;max-width:800px}.checklist li:before{content:'✓';color:#7c3aed;font-weight:bold;margin-right:12px}.pale{background:#fff;border-block:1px solid #e7e1f5}.two-col{display:grid;grid-template-columns:1fr 1.2fr;gap:60px}.two-col h3{font:600 28px Georgia,serif;margin:0}.role{color:#7c3aed;font-weight:700}.credentials li{margin:12px 0;padding-left:20px}.credentials li:before{content:'•';color:#7c3aed;margin-left:-18px;margin-right:10px}.pricing{padding:76px 24px}.price-box{max-width:720px;margin:auto;text-align:center;border:1px solid #ffffff26;border-radius:16px;padding:44px 28px}.price-box h2{color:#fff;margin:auto auto 12px}.price-box>p:not(.kicker):not(.fineprint){color:#b8a9da}.prices{display:flex;justify-content:center;gap:18px;align-items:baseline;margin:24px 0 4px}.prices del{color:#b8a9da;font-size:20px}.prices strong{color:#a78bfa;font:600 54px Georgia,serif}.price-box>small,.fineprint{color:#b8a9da}.price-box .button{margin-top:26px}.fineprint{font-size:13px;margin:20px 0 0}footer{background:#0d0620;color:#b8a9da;text-align:center;padding:30px;font-size:13px}footer a{color:#a78bfa}@media(max-width:700px){.facts,.outcome-grid,.week-grid,.two-col,.checklist{grid-template-columns:1fr}.facts>div{border-right:0;border-bottom:1px solid #ffffff24}.facts>div:last-child{border-bottom:0}.section{padding:56px 0}.hero-inner{padding-top:56px}.week h3{font-size:23px}.prices{flex-wrap:wrap}.prices strong{font-size:44px}.button{width:100%;justify-content:center}}
+`;
 
 export default Home;

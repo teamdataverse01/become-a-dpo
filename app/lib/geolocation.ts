@@ -32,17 +32,15 @@ export function getGeolocationFromRequest(request: NextRequest): GeoLocation {
 export function getFunnelURL(countryCode: string): string {
   const normalizedCode = countryCode.toUpperCase();
 
-  // Nigeria - Form submission
   if (normalizedCode === 'NG') {
     return (
-      process.env.NEXT_PUBLIC_NG_FUNNEL_URL ||
-      'https://www.dataverseconsultingsolutions.com/dpobootcamp-68c8959f-2c116596'
+      process.env.NEXT_PUBLIC_NG_PAYMENT_URL ||
+      'https://www.dataverseconsultingsolutions.com/35a360aa'
     );
   }
 
-  // All other countries - Booking session
   return (
-    process.env.NEXT_PUBLIC_DEFAULT_FUNNEL_URL ||
+    process.env.NEXT_PUBLIC_INTERNATIONAL_PAYMENT_URL ||
     'https://www.dataverseconsultingsolutions.com/dpobootcamp-68c8959f-2c116596-3129f127'
   );
 }
