@@ -116,7 +116,7 @@ const alignmentStyles = `
   :global(.quotes blockquote p){margin:0;max-width:42ch}
   :global(.quote-mark){position:absolute;top:10px;left:28px;color:#a78bfa;font:600 48px/1 Georgia,serif}
   :global(.quotes cite){display:block;margin-top:auto;padding-top:24px;color:#5b21b6;font:700 13px/1.4 Inter,Arial,sans-serif;letter-spacing:.02em}
-  @media(max-width:700px){:global(.facts)>div{min-height:88px}:global(.quotes){grid-template-columns:1fr}}
+  @media(max-width:700px){:global(.facts)>div{min-height:88px}:global(.quotes){grid-template-columns:1fr}:global(.button){width:100%;max-width:100%;justify-content:center;white-space:normal;text-align:center}}
 `;
 
 export default Home;
