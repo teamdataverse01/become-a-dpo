@@ -13,6 +13,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const countryCode =
       override ||
+      (req.headers['x-vercel-ip-country-code'] as string) ||
       (req.headers['x-vercel-ip-country'] as string) ||
       (req.headers['cf-ipcountry'] as string) ||
       'DEFAULT';

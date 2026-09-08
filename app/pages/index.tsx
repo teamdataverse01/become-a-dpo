@@ -1,6 +1,7 @@
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+import { useState } from 'react';
 
 const NG_PAYMENT_URL = process.env.NEXT_PUBLIC_NG_PAYMENT_URL || 'https://www.dataverseconsultingsolutions.com/35a360aa';
 
@@ -26,8 +27,53 @@ const outcomes = [
   ['Prove it with deliverables', 'Leave with professional templates and completed projects that demonstrate exactly what you can do.'],
 ];
 
-const Home: NextPage = () => (
-  <>
+const Home: NextPage = () => {
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleStart = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/redirect?debug=1');
+      const route = await response.json();
+      if (route.countryCode === 'NG') {
+        setShowDashboard(true);
+      } else {
+        window.location.href = route.funnelURL;
+      }
+    } catch {
+      window.location.href = process.env.NEXT_PUBLIC_INTERNATIONAL_PAYMENT_URL || 'https://www.dataverseconsultingsolutions.com/dpobootcamp-68c8959f-2c116596-3129f127';
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!showDashboard) {
+    return (
+      <>
+        <Head><title>Dataverse Solutions | Get Started</title></Head>
+        <main className="gate-page">
+          <div className="gate-glow gate-glow-one" />
+          <div className="gate-glow gate-glow-two" />
+          <section className="gate-card">
+            <Image className="gate-logo" src="/dataverse-logo.png" alt="Dataverse Solutions" width={220} height={70} priority />
+            <span className="gate-eyebrow">Dataverse Solutions</span>
+            <h1>Congratulations on taking your first step toward a career in tech.</h1>
+            <p>Step into your next opportunity.</p>
+            <button className="button gate-button" type="button" onClick={handleStart} disabled={loading}>
+              {loading ? 'Taking you to the next step...' : 'Click here to get started'} <span aria-hidden="true">→</span>
+            </button>
+            <small>You&apos;ll be taken to the next step automatically.</small>
+            <div className="gate-brand">A program by <strong>Dataverse Solutions</strong></div>
+          </section>
+        </main>
+        <style jsx>{styles}</style>
+      </>
+    );
+  }
+
+  return (
+    <>
     <Head><title>DPO Bootcamp | Dataverse Solutions</title><meta name="description" content="Become the DPO organizations need with Dataverse Solutions." /></Head>
     <header className="topbar"><Image src="/dataverse-logo.png" alt="Dataverse Solutions" width={170} height={42} priority /></header>
     <main>
@@ -41,17 +87,11 @@ const Home: NextPage = () => (
     <footer>DataVerse Consulting Solutions · DPO Bootcamp | <a href="mailto:hello@dataverseconsultingsolutions.com">Contact us</a></footer>
     <style jsx>{styles}</style>
   </>
-);
-
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const country = String(req.headers['x-vercel-ip-country'] || req.headers['x-vercel-ip-country-code'] || '').toUpperCase();
-  const internationalUrl = process.env.NEXT_PUBLIC_INTERNATIONAL_PAYMENT_URL || 'https://www.dataverseconsultingsolutions.com/dpobootcamp-68c8959f-2c116596-3129f127';
-  if (country && country !== 'NG') return { redirect: { destination: internationalUrl, permanent: false } };
-  return { props: {} };
+  );
 };
 
 const styles = `
-  :global(*){box-sizing:border-box}:global(body){margin:0;background:#f7f5fc;color:#221542;font-family:Inter,Arial,sans-serif;line-height:1.6}:global(a){color:inherit}.wrap{max-width:1080px;margin:auto;padding:0 24px}.topbar{height:76px;background:#0d0620;display:flex;align-items:center;justify-content:center}.hero,.dark,.pricing{background:#160b2e;color:#f3eeff}.hero{background:radial-gradient(900px 420px at 78% -8%,#6b42a840,transparent 60%),#160b2e}.hero-inner{text-align:center;padding-top:84px;padding-bottom:72px}.badge,.kicker{color:#a78bfa;font-size:13px;font-weight:800;letter-spacing:.04em}.badge{display:inline-block;border:1px solid #ffffff26;border-radius:999px;padding:7px 16px;margin-bottom:24px}.hero h1{max-width:700px;margin:0 auto 20px;color:#fff;font:600 clamp(40px,6vw,68px)/1.08 Georgia,serif}.lead,.section-lead{max-width:650px;margin:0 auto 30px;color:#b8a9da;font-size:19px}.button{display:inline-flex;gap:12px;align-items:center;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:white;text-decoration:none;font-weight:800;padding:15px 26px;border-radius:8px;box-shadow:0 12px 30px #7c3aed55}.note{color:#b8a9da;font-size:14px}.facts{display:grid;grid-template-columns:repeat(4,1fr);margin:50px auto 0;max-width:900px;border:1px solid #ffffff24;border-radius:10px;text-align:left}.facts>div{padding:20px;border-right:1px solid #ffffff24}.facts>div:last-child{border:0}.facts small,.facts em{display:block;color:#b8a9da;font-style:normal;font-size:12px}.facts strong{display:block;color:#fff;font:600 21px Georgia,serif}.section{padding:76px 0}.section h2{max-width:680px;margin:0 0 14px;font:500 clamp(30px,4vw,44px)/1.1 Georgia,serif}.section .kicker{margin:0 0 16px}.section-lead{margin:0 0 42px;color:#6b5f82}.outcome-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.outcome{background:#fff;border:1px solid #e7e1f5;border-radius:10px;padding:24px}.outcome span{display:grid;place-items:center;width:32px;height:32px;color:#7c3aed;border:1px solid #e7e1f5;border-radius:7px}.outcome h3{font:600 20px Georgia,serif;margin:14px 0 6px}.outcome p{color:#6b5f82;margin:0}.dark{background:#0d0620}.dark h2{color:#fff}.dark .section-lead{color:#b8a9da}.timeline{border-left:2px solid #7c3aed;margin-top:38px}.week{position:relative;padding:0 0 32px 48px;display:grid;grid-template-columns:1fr}.week-number{position:absolute;left:-21px;top:0;width:40px;height:40px;border:2px solid #7c3aed;border-radius:50%;background:#0d0620;display:grid;place-items:center;color:#a78bfa;font-weight:700}.week small,.week h4{color:#a78bfa}.week h3{color:#fff;font:600 27px Georgia,serif;margin:4px 0 18px}.week-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}.week h4{font-size:13px;margin:0 0 8px}.week ul,.credentials{padding:0;margin:0;list-style:none}.week li{color:#b8a9da;font-size:14px;margin:7px 0;padding-left:18px}.week li:before{content:'•';color:#7c3aed;margin-left:-16px;margin-right:10px}.outcome-line{border-top:1px solid #ffffff20;padding-top:16px;color:#f3eeff}.outcome-line b{display:block;color:#fff;margin-bottom:4px}.checklist{display:grid;grid-template-columns:1fr 1fr;gap:15px 30px;list-style:none;padding:0;max-width:800px}.checklist li:before{content:'✓';color:#7c3aed;font-weight:bold;margin-right:12px}.pale{background:#fff;border-block:1px solid #e7e1f5}.two-col{display:grid;grid-template-columns:1fr 1.2fr;gap:60px}.two-col h3{font:600 28px Georgia,serif;margin:0}.role{color:#7c3aed;font-weight:700}.credentials li{margin:12px 0;padding-left:20px}.credentials li:before{content:'•';color:#7c3aed;margin-left:-18px;margin-right:10px}.pricing{padding:76px 24px}.price-box{max-width:720px;margin:auto;text-align:center;border:1px solid #ffffff26;border-radius:16px;padding:44px 28px}.price-box h2{color:#fff;margin:auto auto 12px}.price-box>p:not(.kicker):not(.fineprint){color:#b8a9da}.prices{display:flex;justify-content:center;gap:18px;align-items:baseline;margin:24px 0 4px}.prices del{color:#b8a9da;font-size:20px}.prices strong{color:#a78bfa;font:600 54px Georgia,serif}.price-box>small,.fineprint{color:#b8a9da}.price-box .button{margin-top:26px}.fineprint{font-size:13px;margin:20px 0 0}footer{background:#0d0620;color:#b8a9da;text-align:center;padding:30px;font-size:13px}footer a{color:#a78bfa}@media(max-width:700px){.facts,.outcome-grid,.week-grid,.two-col,.checklist{grid-template-columns:1fr}.facts>div{border-right:0;border-bottom:1px solid #ffffff24}.facts>div:last-child{border-bottom:0}.section{padding:56px 0}.hero-inner{padding-top:56px}.week h3{font-size:23px}.prices{flex-wrap:wrap}.prices strong{font-size:44px}.button{width:100%;justify-content:center}}
+  :global(*){box-sizing:border-box}:global(body){margin:0;background:#f7f5fc;color:#221542;font-family:Inter,Arial,sans-serif;line-height:1.6}:global(a){color:inherit}.gate-page{min-height:100vh;display:grid;place-items:center;position:relative;overflow:hidden;padding:24px;background:radial-gradient(900px 600px at 90% -10%,#a78bfa59,transparent 60%),radial-gradient(700px 500px at -10% 110%,#7c3aed66,transparent 60%),linear-gradient(160deg,#160b2e,#0d0620)}.gate-card{position:relative;z-index:1;width:min(560px,100%);padding:56px 44px 48px;text-align:center;color:#f3eeff;background:#ffffff0b;border:1px solid #ffffff24;border-radius:22px;box-shadow:0 30px 80px #0d06208c;backdrop-filter:blur(18px)}.gate-logo{object-fit:contain;margin:0 auto 26px}.gate-eyebrow{display:inline-block;color:#a78bfa;background:#7c3aed29;border:1px solid #ffffff24;border-radius:999px;padding:7px 16px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.gate-card h1{color:#fff;font:600 clamp(28px,4.6vw,38px)/1.12 Georgia,serif;margin:28px 0 14px}.gate-card>p{color:#b8a9da;font-size:17px;margin:0 auto 32px}.gate-button{border:0;cursor:pointer}.gate-button:disabled{opacity:.7;cursor:wait}.gate-card>small{display:block;color:#b8a9da;margin-top:18px;opacity:.8}.gate-brand{color:#b8a9da;font-size:12px;margin-top:38px}.gate-brand strong{color:#f3eeff}.wrap{max-width:1080px;margin:auto;padding:0 24px}.topbar{height:76px;background:#0d0620;display:flex;align-items:center;justify-content:center}.hero,.dark,.pricing{background:#160b2e;color:#f3eeff}.hero{background:radial-gradient(900px 420px at 78% -8%,#6b42a840,transparent 60%),#160b2e}.hero-inner{text-align:center;padding-top:84px;padding-bottom:72px}.badge,.kicker{color:#a78bfa;font-size:13px;font-weight:800;letter-spacing:.04em}.badge{display:inline-block;border:1px solid #ffffff26;border-radius:999px;padding:7px 16px;margin-bottom:24px}.hero h1{max-width:700px;margin:0 auto 20px;color:#fff;font:600 clamp(40px,6vw,68px)/1.08 Georgia,serif}.lead,.section-lead{max-width:650px;margin:0 auto 30px;color:#b8a9da;font-size:19px}.button{display:inline-flex;gap:12px;align-items:center;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:white;text-decoration:none;font-weight:800;padding:15px 26px;border-radius:8px;box-shadow:0 12px 30px #7c3aed55}.note{color:#b8a9da;font-size:14px}.facts{display:grid;grid-template-columns:repeat(4,1fr);margin:50px auto 0;max-width:900px;border:1px solid #ffffff24;border-radius:10px;text-align:left}.facts>div{padding:20px;border-right:1px solid #ffffff24}.facts>div:last-child{border:0}.facts small,.facts em{display:block;color:#b8a9da;font-style:normal;font-size:12px}.facts strong{display:block;color:#fff;font:600 21px Georgia,serif}.section{padding:76px 0}.section h2{max-width:680px;margin:0 0 14px;font:500 clamp(30px,4vw,44px)/1.1 Georgia,serif}.section .kicker{margin:0 0 16px}.section-lead{margin:0 0 42px;color:#6b5f82}.outcome-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.outcome{background:#fff;border:1px solid #e7e1f5;border-radius:10px;padding:24px}.outcome span{display:grid;place-items:center;width:32px;height:32px;color:#7c3aed;border:1px solid #e7e1f5;border-radius:7px}.outcome h3{font:600 20px Georgia,serif;margin:14px 0 6px}.outcome p{color:#6b5f82;margin:0}.dark{background:#0d0620}.dark h2{color:#fff}.dark .section-lead{color:#b8a9da}.timeline{border-left:2px solid #7c3aed;margin-top:38px}.week{position:relative;padding:0 0 32px 48px;display:grid;grid-template-columns:1fr}.week-number{position:absolute;left:-21px;top:0;width:40px;height:40px;border:2px solid #7c3aed;border-radius:50%;background:#0d0620;display:grid;place-items:center;color:#a78bfa;font-weight:700}.week small,.week h4{color:#a78bfa}.week h3{color:#fff;font:600 27px Georgia,serif;margin:4px 0 18px}.week-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}.week h4{font-size:13px;margin:0 0 8px}.week ul,.credentials{padding:0;margin:0;list-style:none}.week li{color:#b8a9da;font-size:14px;margin:7px 0;padding-left:18px}.week li:before{content:'•';color:#7c3aed;margin-left:-16px;margin-right:10px}.outcome-line{border-top:1px solid #ffffff20;padding-top:16px;color:#f3eeff}.outcome-line b{display:block;color:#fff;margin-bottom:4px}.checklist{display:grid;grid-template-columns:1fr 1fr;gap:15px 30px;list-style:none;padding:0;max-width:800px}.checklist li:before{content:'✓';color:#7c3aed;font-weight:bold;margin-right:12px}.pale{background:#fff;border-block:1px solid #e7e1f5}.two-col{display:grid;grid-template-columns:1fr 1.2fr;gap:60px}.two-col h3{font:600 28px Georgia,serif;margin:0}.role{color:#7c3aed;font-weight:700}.credentials li{margin:12px 0;padding-left:20px}.credentials li:before{content:'•';color:#7c3aed;margin-left:-18px;margin-right:10px}.pricing{padding:76px 24px}.price-box{max-width:720px;margin:auto;text-align:center;border:1px solid #ffffff26;border-radius:16px;padding:44px 28px}.price-box h2{color:#fff;margin:auto auto 12px}.price-box>p:not(.kicker):not(.fineprint){color:#b8a9da}.prices{display:flex;justify-content:center;gap:18px;align-items:baseline;margin:24px 0 4px}.prices del{color:#b8a9da;font-size:20px}.prices strong{color:#a78bfa;font:600 54px Georgia,serif}.price-box>small,.fineprint{color:#b8a9da}.price-box .button{margin-top:26px}.fineprint{font-size:13px;margin:20px 0 0}footer{background:#0d0620;color:#b8a9da;text-align:center;padding:30px;font-size:13px}footer a{color:#a78bfa}@media(max-width:700px){.facts,.outcome-grid,.week-grid,.two-col,.checklist{grid-template-columns:1fr}.facts>div{border-right:0;border-bottom:1px solid #ffffff24}.facts>div:last-child{border-bottom:0}.section{padding:56px 0}.hero-inner{padding-top:56px}.week h3{font-size:23px}.prices{flex-wrap:wrap}.prices strong{font-size:44px}.button{width:100%;justify-content:center}.gate-card{padding:44px 26px 36px}}
 `;
 
 export default Home;
